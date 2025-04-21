@@ -53,7 +53,7 @@ class impedance:
 def calc_param(T1:Tower, freq, sigma_g, mu_gr, eps_gr) ->impedance:
     
     # Physical constants
-    C0 = 299_792_458           # Speed of light in vacuum (m/s)
+    C0 = 299792458           # Speed of light in vacuum (m/s)
     mu_0 = 4 * np.pi * 1e-7     # Permeability of free space (H/m)
     eps_0 = 1 / (mu_0 * C0**2)   # Permittivity of free space (F/m)
     Pos_cond=np.zeros((T1.n_cond,2))
@@ -86,9 +86,12 @@ def calc_param(T1:Tower, freq, sigma_g, mu_gr, eps_gr) ->impedance:
         M_Xt=np.transpose(M_X)
         M_Yt=np.transpose(M_Y)
         dij=(((M_X-M_Xt)**2+(M_Y-M_Yt)**2)**0.5)
+
         dij=dij+np.diag(rw) 
         Dij=(((M_X-M_Xt)**2+(M_Y+M_Yt)**2)**0.5)
+
         Dij_p=(((M_X-M_Xt)**2+(M_Y+M_Yt+2*p)**2)**0.5)
+
         #Cálculo de distancias
         Mat_P=np.log(Dij/dij)
         Mat_Pp=np.log(Dij_p/dij)
