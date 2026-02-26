@@ -1,8 +1,17 @@
-# Definition of classes for conductors
+# Parameters computation based on object programming
+# Library of classes and functions for the calculation of the parameters of a transmission line based on the geometrical configuration of the conductors and the characteristics of the ground. The classes include:
+# - cable: defines the characteristics of the conductor, such as its radius, resistance, and maximum current.
+# - Tower: defines the characteristics of the transmission line, such as the number of conductors, the type of conductors, and the method for calculating the parameters.
+# - conductor: defines the position of each conductor in the transmission line. 
+
+
 import numpy as np
 import pandas as pd
 
-
+#class TOWER:
+#    def __init__(self, name, cables):
+#        self.name = name
+#        self.cables = cables  
 class Tower:
     n_cond=1
     name=''
@@ -12,6 +21,28 @@ class Tower:
         self.name = name
         self.phases = cables
         self.n_cond=len(self.phases)
+    def calc_impedance(self, freq, sigma_g, mu_gr, eps_gr):
+        Pos_cond=np.zeros((self.n_cond,2))
+        rw=np.zeros((self.n_cond,1))
+        L_ext=np.zeros((self.n_cond,self.n_cond))
+        for i in range(self.n_cond):
+            for j in range(self.n_cond):
+                if i==j:
+                    h=self.phases[i].pos_y
+                    L_ext[i,j]=2*np.pi*np.log(2*self.phases[i].pos_y/self.phases[i].c.r)
+                    Pos_cond[i,0]=self.phases[i].pos_x
+                    Pos_cond[i,1]=self.phases[i].pos_y
+                else:
+                    Pos_cond[i,0]=self.phases[j].pos_x
+                    Pos_cond[i,1]=self.phases[j].pos_y	
+            Pos_cond[i,0]=self.phases[i].pos_x
+            Pos_cond[i,1]=self.phases[i].pos_y
+            rw[i]=self.phases[i].c.r
+        
+        return calc_param(self, freq, sigma_g, mu_gr, eps_gr)
+    
+#class cable:
+#    def __init__(self, name, r, Rdc, Rac, Tac, Imax):
 class cable:
     name=''
     r:float #[m]
@@ -30,6 +61,8 @@ class cable:
         
     def __str__(self):
         return self.name
+#class conductor:
+#    def __init__(self, c, phase, pos_x, pos_y):
 class conductor:
     c:cable
     pos_x:float
