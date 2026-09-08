@@ -1,3 +1,6 @@
+# Academic code for the Transmission Line courses at Universidad Nacional de Colombia.
+# No warranty of any kind; not for real-world design. See DISCLAIMER.md.
+# License: to be defined (open source intended); until then all rights reserved.
 # Parameters computation based on object programming
 # Library of classes and functions for the calculation of the parameters of a transmission line based on the geometrical configuration of the conductors and the characteristics of the ground. The classes include:
 # - cable: defines the characteristics of the conductor, such as its radius, resistance, and maximum current.

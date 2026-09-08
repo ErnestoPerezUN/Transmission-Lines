@@ -1,3 +1,6 @@
+# Academic code for the Transmission Line courses at Universidad Nacional de Colombia.
+# No warranty of any kind; not for real-world design. See DISCLAIMER.md.
+# License: to be defined (open source intended); until then all rights reserved.
 #Códico para calcular la inductancia y capacitancia de una línea de transmisión
 # CODIGO REALIZADO POR CHATGPT
 # prompt: "Crear un código en python para calcular 

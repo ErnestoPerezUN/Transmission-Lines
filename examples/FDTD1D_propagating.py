@@ -1,3 +1,6 @@
+# Academic code for the Transmission Line courses at Universidad Nacional de Colombia.
+# No warranty of any kind; not for real-world design. See DISCLAIMER.md.
+# License: to be defined (open source intended); until then all rights reserved.
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation

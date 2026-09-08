@@ -1,0 +1,4 @@
+# Extra opcional: src/tower_distances (distancias desde fotografías).
+-r requirements.txt
+opencv-python>=4.10
+imutils>=0.5

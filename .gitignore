@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editor / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Claude Code: arnés y artefactos de desarrollo, fuera de este repo público
+.claude/
+.superpowers/
+
+# Datos descargados por src/line_profile (DEM, mosaicos, perfiles)
+data/
+*.hgt
+*.hgt.gz
+*.tif
+elevation_profile.csv
+
+# Salidas de ejemplos
+out/

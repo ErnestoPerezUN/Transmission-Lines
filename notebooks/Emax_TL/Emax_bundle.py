@@ -1,3 +1,6 @@
+# Academic code for the Transmission Line courses at Universidad Nacional de Colombia.
+# No warranty of any kind; not for real-world design. See DISCLAIMER.md.
+# License: to be defined (open source intended); until then all rights reserved.
 # Code developed in ChatGPT using equation (2.9) from "High Voltage Engineering Fundamentals" by E. Kuffel, W.S. Zaengl, J. Kuffel
 # to calculate the voltage gradient Ei [kV/cm] for a given set of parameters.
 

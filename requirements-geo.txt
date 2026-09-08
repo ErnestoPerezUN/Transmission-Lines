@@ -1,0 +1,7 @@
+# Extra opcional: src/line_profile (perfil topográfico desde SRTM / Copernicus).
+-r requirements.txt
+geopandas>=1.0
+shapely>=2.1
+rasterio>=1.4
+pyproj>=3.7
+requests>=2.32
