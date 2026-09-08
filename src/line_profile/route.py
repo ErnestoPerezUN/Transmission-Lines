@@ -1,10 +1,7 @@
 # Academic code for the Transmission Line courses at Universidad Nacional de Colombia.
 # No warranty of any kind; not for real-world design. See DISCLAIMER.md.
 # License: to be defined (open source intended); until then all rights reserved.
-"""Read and validate a transmission-line route from KML or GeoPackage.
-
-R1-R4 of docs/specs/2026-09-07-perfil-topografico-linea-requirements.md.
-"""
+"""Read and validate a transmission-line route from KML or GeoPackage."""
 import math
 from dataclasses import dataclass
 from pathlib import Path

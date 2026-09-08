@@ -3,13 +3,11 @@
 # License: to be defined (open source intended); until then all rights reserved.
 """Orchestrate the full profile: route -> sampled points -> DEM/canopy -> CSV.
 
-R7-R9 of docs/specs/2026-09-07-perfil-topografico-linea-requirements.md.
-
-Named elevation_profile.py, not profile.py as design.md first proposed:
-`profile` is a Python standard-library module (the pure-Python profiler), and
-naming this file that would shadow it for anything importing line_profile's
-modules -- a real conflict found while writing this file's first test, not a
-style preference.
+Named elevation_profile.py, not profile.py: `profile` is a Python
+standard-library module (the pure-Python profiler), and naming this file
+that would shadow it for anything importing line_profile's modules -- a
+real conflict found while writing this file's first test, not a style
+preference.
 """
 from pathlib import Path
 

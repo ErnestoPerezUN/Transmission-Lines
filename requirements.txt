@@ -1,5 +1,5 @@
 # Núcleo: parámetros, FDTD, campo eléctrico, capacidad de corriente y tests.
-# Versiones probadas el 2026-09-07 con Python 3.12 (ver CLAUDE.md).
+# Versiones probadas el 2026-09-07 con Python 3.12.
 numpy>=2.0
 scipy>=1.15
 matplotlib>=3.10

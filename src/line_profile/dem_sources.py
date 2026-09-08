@@ -4,10 +4,10 @@
 """Registry of the open, keyless DEM and canopy sources used by this module.
 
 All URLs and tile-naming conventions were verified by reading a real point
-((-74.5, 6.5)) on 2026-09-07 (docs/specs/2026-09-07-perfil-topografico-linea-requirements.md,
-R5 and R6). Copernicus and SRTM GL1 do NOT share one tile-name format: this
-was assumed in design.md ("N06W075 para SRTM/Copernicus") but Copernicus
-tiles carry an explicit arc-minute suffix ("N06_00_W075_00"); the functions
+((-74.5, 6.5)) on 2026-09-07. Copernicus and SRTM GL1 do NOT share one
+tile-name format, even though both are 1-degree tiles: Copernicus tiles
+carry an explicit arc-minute suffix ("N06_00_W075_00") while SRTM GL1 does
+not ("N06W075"); the functions
 below use the format actually measured, not the simplified one.
 """
 import math

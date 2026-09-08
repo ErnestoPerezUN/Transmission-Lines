@@ -1,7 +1,7 @@
 # Avisos de terceros, datos y origen del contenido
 
 Este archivo registra todo lo que **no** es obra original de Ernesto Pérez, o que tiene condiciones de uso propias.
-Cualquier archivo nuevo de terceros debe agregar una fila aquí (regla de `CLAUDE.md`).
+Cualquier archivo nuevo de terceros debe agregar una fila aquí.
 
 ## Datos
 
@@ -13,12 +13,11 @@ Cualquier archivo nuevo de terceros debe agregar una fila aquí (regla de `CLAUD
 
 | Archivo | Origen | Condiciones |
 |---|---|---|
-| `src/tower_distances/img/100kV.png` | Fotografía de Ernesto Pérez (por confirmar, ver `docs/decisiones.md` D4) | Misma licencia que el repositorio |
-| `src/tower_distances/img/Tower_500kV.png` | **Origen por confirmar** (D4). Si resulta ser de Google Street View, se retira | — |
+| `src/tower_distances/img/100kV.png` | Fotografía de Ernesto Pérez (origen por confirmar) | Misma licencia que el repositorio |
+| `src/tower_distances/img/Tower_500kV.png` | Origen por confirmar; si resulta ser de Google Street View, se retira | — |
 
-Tres fotografías con marca de agua de Google Street View (`Tower_230kV.png`, `230_kV2.png`, `100kV_sc.png`) se
-retiraron del repositorio el 2026-09-07 porque las condiciones de Google Maps no permiten redistribuirlas. Siguen en
-el historial de git anterior a ese commit; no las reutilices.
+Otras fotografías del mismo directorio, con marca de agua de Google Street View, no se incluyen en este
+repositorio porque las condiciones de Google Maps no permiten redistribuirlas.
 
 ## Código de terceros
 
@@ -26,20 +25,19 @@ el historial de git anterior a ese commit; no las reutilices.
 |---|---|---|
 | (ninguno) | | |
 
-`src/tower_distances/distance_between.py`, copia de un artículo de PyImageSearch (Adrian Rosebrock, 2016), se retiró el
-2026-09-07 porque ese código no tiene licencia de redistribución. Queda pendiente escribir un reemplazo propio
-(`docs/decisiones.md` D3).
+Un script para medir distancias entre objetos en una fotografía, adaptado de un artículo de PyImageSearch
+(Adrian Rosebrock, 2016), no se incluye en este repositorio porque ese código no tiene licencia de
+redistribución. `src/tower_distances/Distance_measure.py` cubre el mismo fin con código propio.
 
 ## Código generado con asistentes de IA
 
 Sin reclamo de terceros; se licencia como el resto del repositorio. Cada archivo lo declara en su encabezado:
 
 - `notebooks/parameters/Calc_inductancia_ChatGPT.py`, `notebooks/Emax_TL/Emax_bundle.py` (ChatGPT).
-- `src/line_profile/line_profile.py`, `src/line_profile/srtm_query.py` (ChatGPT).
 - `src/tower_distances/Distance_measure.py` (ChatGPT).
 - `examples/FDTD1D_propagating.py`, `examples/FDTD2D_propagating.py` (ChatGPT, bocetos sin verificar).
-- `src/fdtd/`, `examples/voltage_source_on_line.py`, `tests/test_tem_line.py` (escritos con Claude Code, verificados
-  con 15 tests de física).
+- `src/fdtd/`, `examples/voltage_source_on_line.py`, `tests/test_tem_line.py`, `src/line_profile/` (escritos con
+  asistencia de Claude Code, verificados con tests de física).
 
 ## Ecuaciones y normas citadas
 

@@ -76,6 +76,7 @@ bocetos anteriores sin relación y se dejan como estaban.
 
 ## Para contribuir o mantener
 
-Las reglas de trabajo del repositorio (estructura, tests de física por módulo, citas de normas, notebooks sin
-salidas) están en [`CLAUDE.md`](CLAUDE.md); las decisiones registradas en [`docs/decisiones.md`](docs/decisiones.md)
-y el plan por módulo en [`docs/roadmap.md`](docs/roadmap.md).
+Cada módulo con tests trae al menos una aserción de física contra un valor cerrado (ver `tests/`); las ecuaciones
+citan su fuente (norma, libro o artículo) en el docstring de la función que las implementa; los notebooks se
+guardan sin salidas. Antes de agregar una dependencia, revisa si ya está en `requirements.txt` o en uno de los
+extras (`requirements-geo.txt`, `requirements-vision.txt`).

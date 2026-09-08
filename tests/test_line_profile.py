@@ -3,10 +3,8 @@
 # License: to be defined (open source intended); until then all rights reserved.
 """Tests for src/line_profile: reading a route, sampling it and reading DEMs.
 
-Grouped by task (T1..T24) from
-docs/specs/2026-09-07-perfil-topografico-linea-tasks.md. Tests marked
-``requiere_red`` hit real network services and are excluded from the fast
-lane: ``python -m pytest tests -q -m "not requiere_red"``.
+Tests marked ``requiere_red`` hit real network services and are excluded
+from the fast lane: ``python -m pytest tests -q -m "not requiere_red"``.
 """
 import math
 import os
@@ -546,9 +544,8 @@ def test_write_profile_csv_format_and_header_warnings(tmp_path):
 # el pipeline real (route.sample_route + elevation_profile.build_profile);
 # solo la lectura del archivo de ruta y el acceso remoto se parchan.
 #
-# Corrección respecto al punto 2 de design.md/tasks.md, verificada aquí con
-# números reales antes de escribir la aserción (no se copia la fórmula tal
-# cual): con paso_m=10 m y celda=30 m, la mayoría de los pasos caen dentro de
+# Verificado aquí con números reales antes de escribir la aserción: con
+# paso_m=10 m y celda=30 m, la mayoría de los pasos caen dentro de
 # la MISMA celda (pendiente_pct = 0 entre ellos) y el paso que cruza una
 # celda muestra hasta 7 puntos porcentuales de desvío frente a la pendiente
 # analítica de 5 %; una tolerancia de 0.1 pp por paso individual es
