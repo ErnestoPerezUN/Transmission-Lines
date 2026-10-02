@@ -1,194 +1,106 @@
 # Academic code for the Transmission Line courses at Universidad Nacional de Colombia.
 # No warranty of any kind; not for real-world design. See DISCLAIMER.md.
 # License: to be defined (open source intended); until then all rights reserved.
-import numpy as np
-import matplotlib.pyplot as plt
+# Original script by Ernesto Pérez (port of a MATLAB code); refactored into functions with the help of
+# Claude (Anthropic). The solver now lives in charge_simulation.py. See NOTICE.md.
+"""Worked example: 500 kV line with 4-bundles and two grounded shield wires.
 
-# ==============================
-# Simulación de Cargas
-# Ernesto Pérez (refactored to Python)
-# ==============================
+Run:  ``python src/electric_field/EF_line.py``           (shows the figures)
+      ``python src/electric_field/EF_line.py --save DIR`` (writes PNG files instead)
 
-# ------------------------------
-# Input Data
-# ------------------------------
+It builds the geometry and applies the **charge simulation** method (``charge_simulation.solve``) with the
+shield wires at 0 V. It compares three shield wire strategies (grounded, insulated, none), checks the
+surface gradient given by the simulation against the critical gradient given by **Peek's formula**
+gradient and draws the layout, the surface gradient and the field map.
+"""
+import argparse
+import pathlib
+import sys
 
-num_cargas = 6          # Number of simulation charges per conductor
-scl = 30                # Plotting scale
-det = 10                # Grid detail (points per diameter)
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
-# Define conductors (list of dictionaries)
-conductors = [
-    {
-        "Pos": np.array([0.0, 15.0]),      # [x,y] in meters
-        "Pot": 220/np.sqrt(3),             # Potential [kV]
-        "diametro": 0.010                  # Diameter [m]
-    },
-        {
-        "Pos": np.array([0.0, 20.0]),      # [x,y] in meters
-        "Pot": 220/np.sqrt(3),             # Potential [kV]
-        "diametro": 0.010                  # Diameter [m]
+import numpy as np                                                    # noqa: E402
+import corona                                                         # noqa: E402
+from charge_simulation import (Wire, add_bundle, charge_per_group, plot_field_map,   # noqa: E402
+                               plot_layout, plot_surface_gradient, solve,
+                               three_phase_potentials, V_PER_M_TO_KV_PER_CM)
+
+# ---------------------------------------------------------------------------
+# Input data: change these numbers to study another line
+# ---------------------------------------------------------------------------
+V_LL_KV = 500.0            # line-to-line rms voltage [kV]
+PHASE_X = [-11.0, 0.0, 11.0]   # horizontal position of phases a, b, c [m]
+PHASE_Y = 25.0             # height of the bundle centres [m] (the sag is ignored)
+N_SUB, SPACING, R_SUB = 4, 0.45, 0.0141   # bundle: sub-conductors, spacing [m], radius [m]
+GUARD_X = [-7.0, 7.0]      # shield wire positions [m]
+GUARD_Y, R_GUARD = 35.0, 0.0055
+ALTITUDE_M, TEMP_C, M_SURFACE = 1500.0, 20.0, 0.8
+
+
+def build_line(with_guard=True):
+    """Return (wires, group_potentials). Groups: 0, 1, 2 are the phases, 3 and 4 the shield wires."""
+    wires = []
+    for i, x in enumerate(PHASE_X):
+        add_bundle(wires, x, PHASE_Y, N_SUB, SPACING, R_SUB, group=i, label="abc"[i])
+    va, vb, vc = three_phase_potentials(V_LL_KV)
+    pot = {0: va, 1: vb, 2: vc}
+    if with_guard:
+        for j, x in enumerate(GUARD_X):
+            wires.append(Wire(x, GUARD_Y, R_GUARD, group=3 + j, label=f"G{j + 1}"))
+    return wires, pot
+
+
+def main(save_dir=None):
+    delta = corona.air_density(ALTITUDE_M, TEMP_C)
+    e_c = corona.peek_critical_gradient(R_SUB * 100, M_SURFACE, delta)
+    print(f"delta = {delta:.3f}, E_c from Peek formula = {e_c:.2f} kV/cm (peak) for m = {M_SURFACE}")
+
+    results = {}
+    for name in ("grounded", "insulated", "none"):
+        wires, pot = build_line(with_guard=(name != "none"))
+        if name == "grounded":
+            pot.update({3: 0.0, 4: 0.0})       # <- shield wires kept in the system at 0 V
+        elif name == "insulated":
+            pot.update({3: None, 4: None})     # <- floating: potential unknown, net charge 0
+        sol = solve(wires, pot, n_charges=12)
+        emax = sol.max_gradient_by_group()
+        results[name] = (wires, sol)
+        line = ", ".join(f"{'abc'[g]}: {emax[g] * V_PER_M_TO_KV_PER_CM:.2f}" for g in range(3))
+        print(f"{name:9s} E_max from charge simulation [kV/cm peak] {line}   simulation error {sol.bc_error:.1e}")
+        if name == "insulated":
+            print("          insulated wire potential [kV peak]:",
+                  round(abs(sol.group_potentials[3]) / 1e3, 1))
+
+    wires, sol = results["grounded"]
+    emax = sol.max_gradient_by_group()
+    worst = max(emax[g] for g in range(3)) * V_PER_M_TO_KV_PER_CM
+    ratio, ok = corona.gradient_margin(worst, e_c)
+    print(f"Worst phase: E_max (simulation) / E_c (Peek) = {ratio:.2f} -> {'meets' if ok else 'does NOT meet'} the 0.95 criterion")
+    print("Induced charge on the shield wires [uC/m, peak]:",
+          [round(abs(charge_per_group(sol)[g]) * 1e6, 3) for g in (3, 4)])
+
+    import matplotlib
+    if save_dir:
+        matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    guards = (3, 4)
+    figs = {
+        "layout": plot_layout(wires, guard_groups=guards, zoom_group=1,
+                              title="500 kV line: phases (colour) and grounded shield wires (grey)"),
+        "surface_gradient": plot_surface_gradient(sol, guards, e_crit_kv_cm=e_c),
+        "field_map": plot_field_map(sol, (-25, 25), (0, 45), guards, vmax_kv_m=40),
     }
-]
-
-# ------------------------------
-# Initialization
-# ------------------------------
-
-num_con = len(conductors)
-angc = 2 * np.pi / num_cargas
-k = 1 / (2 * np.pi * 8.85e-12)
-
-carx = []
-cary = []
-Pcx = []
-Pcy = []
-Perrx = []
-Perry = []
-Pot = []
-
-for i, cond in enumerate(conductors):
-
-    if num_cargas == 1:
-        r_carga = 0
+    if save_dir:
+        out = pathlib.Path(save_dir)
+        out.mkdir(parents=True, exist_ok=True)
+        for k, f in figs.items():
+            f.savefig(out / f"ef_line_{k}.png", dpi=150)
+        print("Figures written to", out)
     else:
-        r_carga = cond["diametro"] / 4
+        plt.show()
 
-    for j in range(1, num_cargas + 1):
-        angle = j * angc
 
-        # Charge positions
-        carx.append(cond["Pos"][0] + r_carga * np.cos(angle))
-        cary.append(cond["Pos"][1] + r_carga * np.sin(angle))
-
-        # Boundary potential points
-        Pcx.append(cond["Pos"][0] + cond["diametro"] * np.cos(angle) / 2)
-        Pcy.append(cond["Pos"][1] + cond["diametro"] * np.sin(angle) / 2)
-
-        # Error evaluation points
-        Perrx.append(cond["Pos"][0] + cond["diametro"] * np.cos(1.5 * angle) / 2)
-        Perry.append(cond["Pos"][1] + cond["diametro"] * np.sin(1.5 * angle) / 2)
-
-        Pot.append(cond["Pot"])
-
-carx = np.array(carx)
-cary = np.array(cary)
-Pcx = np.array(Pcx)
-Pcy = np.array(Pcy)
-Perrx = np.array(Perrx)
-Perry = np.array(Perry)
-Pot = np.array(Pot) 
-
-# ------------------------------
-# Simulation of Charges Method
-# ------------------------------
-
-n = len(Pcy)
-M1 = np.zeros((n, n))
-M1err = np.zeros((n, n))
-
-for i in range(n):
-    for j in range(n):
-        r1 = np.sqrt((Pcy[i] - cary[j])**2 + (Pcx[i] - carx[j])**2)
-        r2 = np.sqrt((Pcy[i] + cary[j])**2 + (Pcx[i] - carx[j])**2)
-
-        r1err = np.sqrt((Perry[i] - cary[j])**2 + (Perrx[i] - carx[j])**2)
-        r2err = np.sqrt((Perry[i] + cary[j])**2 + (Perrx[i] - carx[j])**2)
-
-        M1[i, j] = k * np.log(r2 / r1)
-        M1err[i, j] = k * np.log(r2err / r1err)
-
-# Solve for charge densities
-ro = np.linalg.solve(M1, Pot)
-
-Poterr = M1err @ ro
-error = (Pot - Poterr) / Pot
-
-print("Relative Error (max): ", np.max(np.abs(error)))
-
-# ------------------------------
-# Field and Potential Calculation
-# ------------------------------
-
-for kk, cond in enumerate(conductors):
-
-    Ax = np.arange(
-        cond["Pos"][0] - cond["diametro"] * scl,
-        cond["Pos"][0] + cond["diametro"] * scl,
-        cond["diametro"] / det
-    )
-
-    Ay = np.arange(
-        cond["Pos"][1] - cond["diametro"] * scl,
-        cond["Pos"][1] + cond["diametro"] * scl,
-        cond["diametro"] / det
-    )
-
-    Po = np.zeros((len(Ay), len(Ax)))
-
-    for l, y in enumerate(Ay):
-        for i, x in enumerate(Ax):
-
-            inside = False
-            M2 = np.zeros(len(carx))
-
-            for j in range(len(carx)):
-
-                r1 = np.sqrt((carx[j] - x)**2 + (cary[j] - y)**2)
-
-                if r1 <= cond["diametro"] / 2:
-                    inside = True
-                    P = Pot[j]
-                else:
-                    r2 = np.sqrt((carx[j] - x)**2 + (cary[j] + y)**2)
-                    M2[j] = k * np.log(r2 / r1)
-
-            if inside:
-                Po[l, i] = P
-            else:
-                Po[l, i] = M2 @ ro
-
-    # ------------------------------
-    # Electric Field
-    # ------------------------------
-
-    dx = cond["diametro"] / det
-    dy = cond["diametro"] / det
-
-    Ey, Ex = np.gradient(Po, dy, dx)
-    Ex = -Ex
-    Ey = -Ey
-
-    E_mag = np.sqrt(Ex**2 + Ey**2)
-
-    print(f"Conductor {kk+1}")
-    print("Emax [kV/m] =", np.max(E_mag))
-
-    X, Y = np.meshgrid(Ax, Ay)
-
-    # ------------------------------
-    # Plots
-    # ------------------------------
-
-    plt.figure()
-    plt.contourf(X, Y, Po, levels=15)
-    plt.colorbar(label="Potential [kV]")
-    plt.title(f"Potential Distribution - Conductor {kk+1}")
-    plt.xlabel("x [m]")
-    plt.ylabel("y [m]")
-    plt.show()
-
-    plt.figure()
-    plt.quiver(X, Y, Ex, Ey)
-    plt.title(f"Electric Field Vectors - Conductor {kk+1}")
-    plt.xlabel("x [m]")
-    plt.ylabel("y [m]")
-    plt.show()
-
-    plt.figure()
-    plt.contourf(X, Y, E_mag, levels=15)
-    plt.colorbar(label="|E| [kV/m]")
-    plt.title(f"Electric Field Magnitude - Conductor {kk+1}")
-    plt.xlabel("x [m]")
-    plt.ylabel("y [m]")
-    plt.show()
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--save", metavar="DIR", help="write PNG files to DIR instead of showing figures")
+    main(ap.parse_args().save)

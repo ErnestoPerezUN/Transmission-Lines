@@ -28,3 +28,6 @@ elevation_profile.csv
 
 # Salidas de ejemplos
 out/
+
+# Resultados exportados por notebooks/corona/Corona_haz.ipynb
+notebooks/corona/corona_results/

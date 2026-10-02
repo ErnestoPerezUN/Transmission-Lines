@@ -23,9 +23,11 @@ Código académico de Ernesto Pérez para dos cursos de la Universidad Nacional 
 |---|---|---|---|
 | `src/parameters/` + `notebooks/parameters/` | Modelado | Parámetros Z y Y de una línea con tierra finita (profundidad compleja de Deri), clases `cable`, `conductor`, `Tower` | — |
 | `src/fdtd/` + `examples/voltage_source_on_line.py` | Modelado | Propagación electromagnética en un conductor sobre tierra (FDTD 2D) comparada con los modelos de circuito concentrado y distribuido | 15 |
-| `src/electric_field/` | Modelado | Campo eléctrico en la superficie de conductores por el método de simulación de cargas | — |
+| `src/electric_field/` | Ambos | Simulación de cargas 2D con cables de guarda a 0 V y campo en el tiempo (`charge_simulation.py`), ley de Peek, gradiente del haz y ecuaciones 4.208-4.226 de Nolasco et al. (`corona.py`), línea descrita por parámetros para variarlos en talleres (`line_case.py`); ejemplo `EF_line.py` | 47 |
 | `notebooks/current_capacity/` | Diseño | Corriente máxima de un conductor desnudo según IEEE 738-2012 (aproximación estática) | — |
-| `notebooks/Emax_TL/` | Diseño | Gradiente superficial de un haz de conductores (Kuffel, ec. 2.9) | — |
+| `notebooks/Emax_TL/` | Diseño | Gradiente superficial de un haz (Kuffel, ec. 2.9) y verificación contra Peek; usa `corona.py` | (en `test_corona.py`) |
+| `notebooks/corona/` | Diseño | Notebook interactivo y taller: parámetros con diagramas, recorrido por la superficie de un subconductor, acercamiento a un haz con equipotenciales, animación de un ciclo de 60 Hz, comparación con Kuffel y con el caso base y la figura 4.62 del libro de CIGRE (Nolasco et al.), barridos, exportar a CSV y cinco preguntas de taller | (usa `test_corona.py`) |
+| `notebooks/corona/Corona_taller.ipynb` | Diseño | Taller para estudiantes: deja preparadas las variaciones (ejemplo de dos puntos por pregunta) para responder las preguntas del taller, cuyo enunciado se entrega aparte | (usa `test_line_case.py`) |
 | `src/line_profile/` | Diseño | Perfil de elevación de una línea a partir de SRTM / Copernicus DEM (requiere `requirements-geo.txt`) | — |
 | `src/tower_distances/` | Diseño | Distancias entre conductores a partir de una fotografía de la torre (requiere `requirements-vision.txt`) | — |
 

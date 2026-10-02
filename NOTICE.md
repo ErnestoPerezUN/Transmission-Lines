@@ -33,7 +33,13 @@ redistribución. `src/tower_distances/Distance_measure.py` cubre el mismo fin co
 
 Sin reclamo de terceros; se licencia como el resto del repositorio. Cada archivo lo declara en su encabezado:
 
-- `notebooks/parameters/Calc_inductancia_ChatGPT.py`, `notebooks/Emax_TL/Emax_bundle.py` (ChatGPT).
+- `notebooks/parameters/Calc_inductancia_ChatGPT.py` (ChatGPT).
+- `notebooks/Emax_TL/Emax_bundle.py` (primera versión en ChatGPT; reescrita con Claude Code).
+- `src/electric_field/` (`charge_simulation.py`, `corona.py`, `EF_line.py`) y `tests/test_corona.py` (escritos con
+  asistencia de Claude Code, verificados con tests contra la solución exacta del cilindro sobre tierra, Kuffel ec. 2.9
+  y valores de la ley de Peek calculados a mano).
+- `notebooks/corona/Corona_haz.ipynb` (escrito con asistencia de Claude Code y ejecutado de punta a punta; las ecuaciones de
+  pérdidas, ruido audible y radiointerferencia son de líneas bipolares de corriente continua y se verificaron con el caso base del libro).
 - `src/tower_distances/Distance_measure.py` (ChatGPT).
 - `examples/FDTD1D_propagating.py`, `examples/FDTD2D_propagating.py` (ChatGPT, bocetos sin verificar).
 - `src/fdtd/`, `examples/voltage_source_on_line.py`, `tests/test_tem_line.py`, `src/line_profile/` (escritos con
